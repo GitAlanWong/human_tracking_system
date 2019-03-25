@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=8">
+  <meta http-equiv="Expires" content="0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Cache-control" content="no-cache">
+  <meta http-equiv="Cache" content="no-cache">
+  <meta http-equiv="refresh" CONTENT="30" >
+  <!--script src="./script/jquery.js" type="text/javascript" charset="utf-8"></script-->
+  <title>Human Tracking System on the Quadcopter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style type="text/css">
+    body {
+      background-color: #789; margin: 0;
+      padding: 0; font: 14px Helvetica, Arial, sans-serif; 
+    }
+    div.content {
+      width: 800px; margin: 0em auto; padding: 20px 50px;
+      background-color: #000; border-radius: 1em;
+    }
+    #messages {
+      border: 2px solid #fec; border-radius: 1em;
+      height: 10em; overflow: scroll; padding: 0.5em 1em;
+    }
+    a:link, a:visited { color: #69c; text-decoration: none; }
+    @media (max-width: 700px) {
+      body { background-color: #fff; }
+      div.content {
+        width: auto; margin: 0 auto; border-radius: 0;
+        padding: 1em;
+      }
+    }
+</style>
+</head>
+<body>
+  <div class="content">
+    <h1 margin="center"><font color="#fff">Human Tracking System on the Quadcopter</font></h1>
+    <div class="content" id="imgDiv"style="width:640px; height:480px; border:0px solid"></div>
+    <!--p>
+      <input type="text" id="send_input" />
+      <button id="send_button">Send Message</button>
+    </p-->
+  </div>
+</body>
+<script language="javascript" type="text/javascript">
+
+  var rooms = [];
+  var ws = new WebSocket('ws://' + location.host + '/ws');
+
+  if (!window.console) { window.console = { log: function() {} } };
+
+  ws.onopen = function(ev)  { console.log(ev); };
+  ws.onerror = function(ev) { console.log(ev); };
+  ws.onclose = function(ev) { console.log(ev); };
+
+  ws.onmessage = function(ev) {
+    /*  {"img_url":"../pic/pic.jpg","ox":"50","oy":"50","dx":"32","dy":"32"}  */
+    console.log(ev);
+    if(isJSON(ev.data)){
+      var obj = JSON.parse(ev.data);
+      console.log(obj);
+      var img = document.getElementById('imgDiv');
+      img.innerHTML = '<div style="width:640px; height:480px; border:1px solid;background:url('+ obj.img_url +'?rdn='+ Math.random() +') no-repeat;"><div style="width:'+ parseInt(obj.dx) +'px; height:'+ parseInt(obj.dy) +'px; margin-left:'+ parseInt(obj.ox) +'px;margin-top:' + parseInt(obj.oy) +'px;border:5px solid red;"></div></div>';
+    }
+  };
+
+  /*window.onload = function() {
+    document.getElementById('send_button').onclick = function(ev) {
+      var msg = document.getElementById('send_input').value;
+      document.getElementById('send_input').value = '';
+      ws.send(msg);
+    };
+    document.getElementById('send_input').onkeypress = function(ev) {
+      if (ev.keyCode == 13 || ev.which == 13) {
+        document.getElementById('send_button').click();
+      }
+    };
+  };*/
+
+  function isJSON(str) {
+    if (typeof str == 'string') {
+        try {
+            JSON.parse(str);
+            return true;
+        } catch(e) {
+            console.log(e);
+            return false;
+        }
+    }
+    console.log('It is not a string!')    
+  };
+</script>
+</html>

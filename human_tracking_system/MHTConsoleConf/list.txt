@@ -1,0 +1,5 @@
+./Data/sample001.bmp
+./Data/sample002.bmp
+./Data/sample003.bmp
+./Data/sample004.bmp
+./Data/sample005.bmp
